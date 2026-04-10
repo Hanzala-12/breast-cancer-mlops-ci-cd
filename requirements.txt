@@ -1,0 +1,8 @@
+mlflow
+scikit-learn
+pandas
+pytest
+huggingface_hub
+joblib
+setuptools
+wheel
