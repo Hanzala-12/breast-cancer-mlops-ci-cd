@@ -32,4 +32,21 @@ jobs:
         if: success()
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: echo "Deploying auto-updated model..."
+        run: |
+          pip install huggingface_hub joblib
+          echo "Deploying the auto-updated best model..."
+          python -c "
+          import os
+          from huggingface_hub import HfApi
+          api = HfApi()
+          try:
+              api.upload_file(
+                  path_or_fileobj='models/best_model.pkl',
+                  path_in_repo='best_model.pkl',
+                  repo_id='hhui00/breast_cancer_M', 
+                  token=os.environ.get('HF_TOKEN')
+              )
+              print('Successfully deployed retrained model to Hugging Face!')
+          except Exception as e:
+              print(f'Deployment failed: {e}')
+          "

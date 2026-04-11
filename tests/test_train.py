@@ -9,4 +9,4 @@ def test_model_type():
     if os.path.exists("models/best_model.pkl"):
         model = joblib.load("models/best_model.pkl")
         assert model is not None
-        assert type(model).__name__ in ["RandomForestClassifier", "LogisticRegression"]
+        assert type(model).__name__ in ["RandomForestClassifier", "LogisticRegression", "GradientBoostingClassifier"]

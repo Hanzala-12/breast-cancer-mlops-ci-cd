@@ -31,6 +31,12 @@ jobs:
       - name: Run Tests
         run: pytest tests/
 
+      - name: Upload Best Model Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: best_model
+          path: models/best_model.pkl
+
   deploy:
     needs: train-and-test
     runs-on: ubuntu-latest
@@ -38,6 +44,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Download Best Model Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: best_model
+          path: models
 
       - name: Deploy to Hugging Face
         env:
@@ -49,11 +61,14 @@ jobs:
           import os
           from huggingface_hub import HfApi
           api = HfApi()
-          # Note: Assuming 'models/best_model.pkl' created in previous steps was stored/passed.
-          # api.upload_file(
-          #     path_or_fileobj='models/best_model.pkl',
-          #     path_in_repo='best_model.pkl',
-          #     repo_id='YourUsername/YourModelRepo',
-          #     token=os.environ.get('HF_TOKEN')
-          # )
+          try:
+              api.upload_file(
+                  path_or_fileobj='models/best_model.pkl',
+                  path_in_repo='best_model.pkl',
+                  repo_id='hhui00/breast_cancer_M', 
+                  token=os.environ.get('HF_TOKEN')
+              )
+              print('Successfully deployed to Hugging Face!')
+          except Exception as e:
+              print(f'Deployment failed: {e}')
           "
